@@ -5,7 +5,7 @@ var tabla=document.createElement("table")
 for (let i = 0; i < 9; i++) {
     let fila = tabla.insertRow()
     for (let j = 0; j <9; j++) {
-        var celda = fila.insertCell() 
+        let celda = fila.insertCell() 
         celda.onclick=function(){
             celda.innerText=guardar;
         } 
