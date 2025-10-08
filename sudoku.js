@@ -73,6 +73,45 @@ function colocarFijos() {
     }
 }
 
+let solution = [
+    "387491625",
+    "241568379",
+    "569327418",
+    "758619234",
+    "123784596",
+    "496253187",
+    "934176852",
+    "675832941",
+    "812945763"
+]
+
+function verificarResultado() {
+    let esCorrecto = true;
+
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            const celda = document.getElementById(`${i}-${j}`);
+            const valorCelda = celda.innerText.trim();
+            const valorCorrecto = solution[i][j];
+
+            if (valorCelda !== valorCorrecto) {
+                celda.style.backgroundColor = "#f88"; 
+                esCorrecto = false;
+            } else {
+                if (!celda.classList.contains("fija")) {
+                    celda.style.backgroundColor = "#8f8"; 
+                }
+            }
+        }
+    }
+
+    if (esCorrecto) {
+        alert("¡Felicidades! Sudoku resuelto correctamente");
+    } else {
+        alert("Hay errores en el tablero. Revisa las celdas marcadas en rojo.");
+    }
+}
+
 window.onload = function() {
     crearTablero();
     crearPanelNumeros();
