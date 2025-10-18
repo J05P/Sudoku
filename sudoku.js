@@ -1,41 +1,68 @@
-var guardar="";
-//Tablero principal
-var tableroPrincipal=document.getElementById("tablero")
-var tabla=document.createElement("table")
-for (let i = 0; i < 9; i++) {
-    let fila = tabla.insertRow()
-    for (let j = 0; j <9; j++) {
-        let celda = fila.insertCell() 
-        celda.id=(i+"-"+j);
-        celda.onclick=function(){
-            celda.innerText=guardar;
-        } 
-    }
-}
-tableroPrincipal.appendChild(tabla)
-//
-//
-//
-//Tablero de los numeros.
-var Numeros = document.getElementById("numeros");
-var TNumeros = document.createElement("table");
-var filaNumeros = TNumeros.insertRow();
-for (let numero = 1; numero <= 10; numero++) {
-    let valor = numero === 10 ? "X" : numero;
-    let celda2 = filaNumeros.insertCell();
-    celda2.id = valor;
-    celda2.textContent = valor;
-    celda2.addEventListener("click", function () {
-        guardar = valor;
-    });
-}
-Numeros.appendChild(TNumeros);
-//
-//
-//
-//El juego de por si
+let guardar = "";
+let errores = 0;
 
-let board = [7,4,9,1,6,5,
+function crearTablero() {
+    const tableroPrincipal = document.getElementById("tablero");
+    const tabla = document.createElement("table");
+    for (let i = 0; i < 9; i++) {
+        const fila = tabla.insertRow();
+        for (let j = 0; j < 9; j++) {
+            const celda = fila.insertCell();
+            celda.id = `${i}-${j}`;
+            celda.classList.add("celda");
+            
+            celda.onclick = () => {
+                if (celda.classList.contains("fija") || celda.classList.contains("correcta")) {
+                    return;
+                }
+                
+                if (guardar === "X") {
+                    if (!celda.classList.contains("fija") && !celda.classList.contains("correcta")) {
+                        celda.innerText = "";
+                        celda.classList.remove("incorrecta");
+                    }
+                    return;
+                }
+                
+                if (guardar !== "") {
+                    const valor = parseInt(guardar);
+                    if (valor === solucion[i][j]) {
+                        celda.innerText = valor;
+                        celda.style.color = "green";
+                        celda.classList.add("correcta");
+                        celda.classList.remove("incorrecta");
+                    } else {
+                        celda.innerText = valor;
+                        celda.style.color = "red";
+                        celda.classList.add("incorrecta");
+                        errores++;
+                        actualizarContador();
+                    }
+                }
+            };
+        }
+    }
+    tableroPrincipal.appendChild(tabla);
+}
+
+function crearPanelNumeros() {
+    const numerosDiv = document.getElementById("numeros");
+    const tNums = document.createElement("table");
+    const filaNums = tNums.insertRow();
+    for (let num = 1; num <= 10; num++) {
+        const valor = (num === 10 ? "X" : num.toString());
+        const celda = filaNums.insertCell();
+        celda.id = `num-${valor}`;
+        celda.innerText = valor;
+        celda.onclick = () => {
+            guardar = valor;
+        };
+    }
+    numerosDiv.appendChild(tNums);
+}
+
+const board = [
+    7,4,9,1,6,5,
     2,6,3,9,
     7,1,
     5,8,6,4,
@@ -45,33 +72,50 @@ let board = [7,4,9,1,6,5,
     6,7,8,3,
     8,1,4,5
 ];
+const solucion = [
+    [3,8,7,4,9,1,6,2,5],
+    [2,4,1,5,6,8,3,7,9],
+    [5,6,9,3,2,7,4,1,8],
+    [7,5,8,6,1,9,2,3,4],
+    [1,2,3,7,8,4,5,9,6],
+    [4,9,6,2,5,3,1,8,7],
+    [9,3,4,1,7,6,8,5,2],
+    [6,7,5,8,3,2,9,4,1],
+    [8,1,2,9,4,5,7,6,3]
+];
 
-let x=[];
-let matriz=[];
-x.push(matriz([0][2]),matriz([0][3]),matriz([0][4]),matriz([0][5]),matriz([0][6]),matriz([0][8]),
-matriz([1][0]),matriz([1][4]),matriz([1][6]),matriz([1][8]),
-matriz([2][5]),matriz([2][7]),
-matriz([3][1]),matriz([3][2]),matriz([3][3]),matriz([3][8]),
-matriz([4][2]),matriz([4][7]),
-matriz([5][2]),matriz([5][3]),matriz([5][6]),matriz([5][7]),matriz([5][8]),
-matriz([6][0]),matriz([6][2]),matriz([6][4]),matriz([6][8]),
-matriz([7][0]),matriz([7][1]),matriz([7][3]),matriz([7][4]),
-matriz([8][0]),matriz([8][1]),matriz([8][4]),matriz([8][5]),
-)
+const posiciones = [
+    [0,2],[0,3],[0,4],[0,5],[0,6],[0,8],
+    [1,0],[1,4],[1,6],[1,8],
+    [2,5],[2,7],
+    [3,1],[3,2],[3,3],[3,8],
+    [4,2],[4,7],
+    [5,2],[5,3],[5,6],[5,7],[5,8],
+    [6,0],[6,2],[6,4],[6,8],
+    [7,0],[7,1],[7,3],[7,4],
+    [8,0],[8,1],[8,4],[8,5]
+];
 
-for (let index = 0; index < board.length; index++) {
-    matriz[i]=x[i]
-    
+function colocarFijos() {
+    for (let i = 0; i < board.length && i < posiciones.length; i++) {
+        const [r, c] = posiciones[i];
+        const celda = document.getElementById(`${r}-${c}`);
+        if (celda) {
+            celda.innerText = board[i];
+            celda.classList.add("fija"); 
+            celda.style.color = "blue";   
+        }
+    }
 }
 
-let solution = [
-    "387491625",
-    "241568379",
-    "569327418",
-    "758619234",
-    "123784596",
-    "496253187",
-    "934176852",
-    "675832941",
-    "812945763"
-];
+function actualizarContador() {
+    const cont = document.getElementById("contador");
+    cont.innerText = `Errores: ${errores}`;
+}
+
+window.onload = function() {
+    crearTablero();
+    crearPanelNumeros();
+    colocarFijos();
+    actualizarContador();
+};
